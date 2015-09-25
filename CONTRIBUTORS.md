@@ -15,6 +15,10 @@
 
 * Bug fix #109
 
+### [@annmirosh](https://github.com/annmirosh)
+
+* Fix input event for mobile device #232 #178
+
 ### [@antony: Antony Jones](https://github.com/antony)
 
 * Allow the user to set an initial value OBJECT instead of just a string #173
@@ -33,6 +37,14 @@
 
 * Missing 'type' field on input element when not specified #167
 
+### [@federicojasson: Federico Jasson](https://github.com/federicojasson)
+
+* Fix auto-match #245 #246
+
+### [@Freezystem: Nico](https://github.com/Freezystem)
+
+* Add focus-first #92 #242
+
 ### [@handiwijoyo: Handi Wijoyo](https://github.com/handiwijoyo)
 
 * Add css to bower.json main #68
@@ -48,6 +60,10 @@
 ### [@jermspeaks: Jeremy Wong](https://github.com/jermspeaks)
 
 * Support withCredentials for $http #113
+
+### [@JohannesFerner: Johannes Ferner](https://github.com/JohannesFerner)
+
+* Add an example on clearInput event #225 #252
 
 ### [@Leocrest](https://github.com/Leocrest)
 
