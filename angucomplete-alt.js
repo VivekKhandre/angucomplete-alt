@@ -662,7 +662,7 @@
       };
 
       scope.inputChangeHandler = function(str) {
-        if (str.length < minlength) {
+        if (!str || str.length < minlength) {
           clearResults();
         }
         else if (str.length === 0 && minlength === 0) {

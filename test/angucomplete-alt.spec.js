@@ -1501,7 +1501,7 @@ describe('angucomplete-alt', function() {
     });
   });
 
-  describe('set minlenght to 0', function() {
+  describe('set minlength to 0', function() {
     it('should show all items when focused', function() {
       var element = angular.element('<div angucomplete-alt id="ex1" placeholder="Search countries" selected-object="countrySelected" local-data="countries" search-fields="name" title-field="name" minlength="0"/>');
       $scope.countrySelected = null;
@@ -1560,7 +1560,7 @@ describe('angucomplete-alt', function() {
       element.find('.angucomplete-row .highlight').each(function() {
         expect($(this).text().length).toBe(0);
       });
-      expect(element.find('.angucomplete-row').length).toBe(3);
+      expect(element.find('.angucomplete-row').length).toBe(0);
     });
   });
 
