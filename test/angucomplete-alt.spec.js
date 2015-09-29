@@ -1399,6 +1399,19 @@ describe('angucomplete-alt', function() {
       eKeydown.which = KEY_UP;
       inputField.trigger(eKeydown);
       expect(inputField.val()).toEqual('Emma Watson');
+
+      // Down arrow 3 time
+      eKeydown.which = KEY_DW;
+      inputField.trigger(eKeydown);
+      inputField.trigger(eKeydown);
+      inputField.trigger(eKeydown);
+      expect(inputField.val()).toEqual('e');
+
+      // Up arrow 1 time
+      eKeydown.which = KEY_UP;
+      inputField.trigger(eKeydown);
+      expect(inputField.val()).toEqual('John Elway');
+
     });
 
     it('should update input field when up/down arrow key is pressed with match class on', function() {
