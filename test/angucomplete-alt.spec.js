@@ -1399,6 +1399,19 @@ describe('angucomplete-alt', function() {
       eKeydown.which = KEY_UP;
       inputField.trigger(eKeydown);
       expect(inputField.val()).toEqual('Emma Watson');
+
+      // Down arrow 3 time
+      eKeydown.which = KEY_DW;
+      inputField.trigger(eKeydown);
+      inputField.trigger(eKeydown);
+      inputField.trigger(eKeydown);
+      expect(inputField.val()).toEqual('e');
+
+      // Up arrow 1 time
+      eKeydown.which = KEY_UP;
+      inputField.trigger(eKeydown);
+      expect(inputField.val()).toEqual('John Elway');
+
     });
 
     it('should update input field when up/down arrow key is pressed with match class on', function() {
@@ -1501,7 +1514,7 @@ describe('angucomplete-alt', function() {
     });
   });
 
-  describe('set minlenght to 0', function() {
+  describe('set minlength to 0', function() {
     it('should show all items when focused', function() {
       var element = angular.element('<div angucomplete-alt id="ex1" placeholder="Search countries" selected-object="countrySelected" local-data="countries" search-fields="name" title-field="name" minlength="0"/>');
       $scope.countrySelected = null;
@@ -1560,7 +1573,7 @@ describe('angucomplete-alt', function() {
       element.find('.angucomplete-row .highlight').each(function() {
         expect($(this).text().length).toBe(0);
       });
-      expect(element.find('.angucomplete-row').length).toBe(3);
+      expect(element.find('.angucomplete-row').length).toBe(0);
     });
   });
 

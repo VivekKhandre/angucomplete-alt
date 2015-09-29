@@ -352,6 +352,14 @@
               }
             }
           }
+          else{
+            if((scope.currentIndex === 0) < scope.results.length && scope.showDropdown){
+              scope.$apply(function() {
+                scope.currentIndex = -1;
+                inputField.val(scope.searchStr);
+              });
+            }
+          }
         } else if (which === KEY_UP && scope.results) {
           event.preventDefault();
           if (scope.currentIndex >= 1) {
@@ -367,10 +375,16 @@
               }
             }
           }
-          else if (scope.currentIndex === 0) {
+          else if (scope.currentIndex === 0 ){
             scope.$apply(function() {
-              scope.currentIndex = -1;
+              scope.currentIndex = scope.results.length;
               inputField.val(scope.searchStr);
+            });
+          }
+          else if(scope.currentIndex === -1){
+            scope.$apply(function() {
+              scope.currentIndex = scope.results.length - 1;
+              updateInputField();
             });
           }
         } else if (which === KEY_TAB) {
@@ -662,7 +676,7 @@
       };
 
       scope.inputChangeHandler = function(str) {
-        if (str.length < minlength) {
+        if (!str || str.length < minlength) {
           clearResults();
         }
         else if (str.length === 0 && minlength === 0) {
