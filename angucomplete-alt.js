@@ -377,7 +377,7 @@
           }
           else if (scope.currentIndex === 0 ){
             scope.$apply(function() {
-              scope.currentIndex = scope.results.length;
+              scope.currentIndex = -1;
               inputField.val(scope.searchStr);
             });
           }
