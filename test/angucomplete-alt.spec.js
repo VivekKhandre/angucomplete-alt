@@ -1,7 +1,7 @@
 'use strict';
 
 describe('angucomplete-alt', function() {
-  var $compile, $scope, $timeout;
+  var $compile, $scope, $timeout, $templateCache;
   var KEY_DW  = 40,
       KEY_UP  = 38,
       KEY_ES  = 27,
@@ -12,10 +12,11 @@ describe('angucomplete-alt', function() {
 
   beforeEach(module('angucomplete-alt'));
 
-  beforeEach(inject(function(_$compile_, $rootScope, _$timeout_) {
+  beforeEach(inject(function(_$compile_, $rootScope, _$timeout_, _$templateCache_) {
     $compile = _$compile_;
     $scope = $rootScope.$new();
     $timeout = _$timeout_;
+    $templateCache = _$templateCache_;
   }));
 
   describe('Render', function() {
@@ -1573,7 +1574,7 @@ describe('angucomplete-alt', function() {
       element.find('.angucomplete-row .highlight').each(function() {
         expect($(this).text().length).toBe(0);
       });
-      expect(element.find('.angucomplete-row').length).toBe(0);
+      expect(element.find('.angucomplete-row').length).toBe(3);
     });
   });
 
@@ -1721,4 +1722,52 @@ describe('angucomplete-alt', function() {
       },0);
     });
   });
+
+  describe('bindDropdownSelector', function() {
+    it('should be handled by angucomplete-alt directive', function() {
+      var element = angular.element('<div class="group"><div class="bindhere"></div><div class="angucomplete" angucomplete-alt id="ex1" placeholder="Search people" selected-object="selectedPerson" local-data="people" search-fields="name" title-field="name" minlength="1" bindDropdownSelector=".bindhere"></div></div>');
+      $scope.selectedPerson = undefined;
+      $scope.people = [
+        {name: 'Jim Beam', email: 'jbeam@example.com'},
+        {name: 'Elvis Presly', email: 'theking@example.com'},
+        {name: 'John Elway', email: 'elway@example.com'}
+      ];
+      $compile(element)($scope);
+      $scope.$digest();
+
+      var bindHereElement = element.find('.bindhere');
+      $scope.$digest();
+
+      expect(element.hasClass('group')).toBeTruthy();
+      expect(bindHereElement).toBeTruthy();
+      expect(bindHereElement.children().length).toBe(0);
+      expect(element.children().hasClass('angucomplete')).toBeTruthy();
+      expect(element.find('.angucomplete-dropdown').length).toBe(1);
+    });
+  });
+
+  describe('Template', function() {
+    it('should have the template provided from url by angucomplete-alt directive ', function(){
+      var element = angular.element('<div class="angucomplete" angucomplete-alt id="ex1" placeholder="Search people" selected-object="selectedPerson" local-data="people" search-fields="name" title-field="name" minlength="1" template-url="/angucomplete/index.html" template-dropdown-url="/angucomplete/dropdown.html"></div>');
+      $scope.selectedPerson = undefined;
+      $scope.people = [
+        {name: 'Jim Beam', email: 'jbeam@example.com'},
+        {name: 'Elvis Presly', email: 'theking@example.com'},
+        {name: 'John Elway', email: 'elway@example.com'}
+      ];
+      $scope.$digest();
+
+      $templateCache.put('/angucomplete/index.html', '<div class="angucomp-holder"><input></input></div>');
+      $templateCache.put('/angucomplete/dropdown.html', '<div class="angucomp-dropdown"></div>');
+
+      $compile(element)($scope);
+      $scope.$digest();
+
+      expect(element.children().hasClass('angucomp-holder')).toBeTruthy();
+      expect(element.find('.angucomp-dropdown').length).toBe(1);
+
+    });
+  });
+
+
 });
