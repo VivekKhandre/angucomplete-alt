@@ -337,7 +337,7 @@
                 clearResults();
               }
               scope.$apply();
-            } else if (which === KEY_DW && scope.results) {
+            } else if (which === KEY_DW && scope.results && scope.results.length > 0) {
               event.preventDefault();
               if ((scope.currentIndex + 1) < scope.results.length && scope.showDropdown) {
                 scope.$apply(function () {
@@ -361,7 +361,7 @@
                 }
               }
 
-            } else if (which === KEY_UP && scope.results) {
+            } else if (which === KEY_UP && scope.results && scope.results.length > 0) {
               event.preventDefault();
               if (scope.currentIndex >= 1) {
                 scope.$apply(function () {
