@@ -252,8 +252,7 @@
               if (!scope.searchStr || scope.searchStr === '') {
                 scope.showDropdown = false;
               } else if (scope.searchStr.length >= minlength) {
-                initResults();
-
+                updateResults();
                 if (searchTimer) {
                   $timeout.cancel(searchTimer);
                 }
@@ -495,9 +494,13 @@
           }
 
           function initResults() {
+            updateResults();
+            scope.results = [];
+          }
+
+          function updateResults(){
             scope.showDropdown = displaySearching;
             scope.currentIndex = scope.focusFirst ? 0 : -1;
-            scope.results = [];
           }
 
           function getLocalResults(str) {
@@ -554,9 +557,8 @@
 
           function processResults(responseData, str) {
             var i, description, image, text, formattedText, formattedDesc;
-
+            var results = [];
             if (responseData && responseData.length > 0) {
-              scope.results = [];
 
               for (i = 0; i < responseData.length; i++) {
                 if (scope.titleField && scope.titleField !== '') {
@@ -578,14 +580,14 @@
                   formattedDesc = findMatchString(description, str);
                 }
 
-                scope.results[scope.results.length] = {
+                results[results.length] = {
                   title: formattedText,
                   description: formattedDesc,
                   image: image,
                   originalObject: responseData[i]
                 };
               }
-
+              scope.results = results;
             } else {
               scope.results = [];
             }
