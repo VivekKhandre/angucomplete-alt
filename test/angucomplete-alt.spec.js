@@ -29,7 +29,7 @@ describe('angucomplete-alt', function() {
       expect(element.find('#ex1_value').length).toBe(1);
     });
 
-    it('should render planceholder string', function() {
+    it('should render placeholder string', function() {
       var element = angular.element('<div angucomplete-alt id="ex1" placeholder="Search countries" selected-object="selectedCountry" local-data="countries" search-fields="name" title-field="name"/>');
       $scope.selectedCountry = null;
       $compile(element)($scope);
@@ -635,7 +635,7 @@ describe('angucomplete-alt', function() {
       $httpBackend.verifyNoOutstandingRequest();
     });
 
-    it('should process normarlly if not given', function() {
+    it('should process normally if not given', function() {
       var element = angular.element('<div angucomplete-alt id="ex1" placeholder="Search names" selected-object="selected" remote-url="names?q=" search-fields="first" remote-url-data-field="data" title-field="name" minlength="1"/>');
       $compile(element)($scope);
       $scope.$digest();
@@ -778,6 +778,37 @@ describe('angucomplete-alt', function() {
     });
   });
 
+  describe('click for selecting', function() {
+    it('should select the selected suggestion when it is clicked', function() {
+      var element = angular.element('<div angucomplete-alt id="ex1" placeholder="Search countries" selected-object="selectedCountry" local-data="countries" search-fields="name" title-field="name" minlength="1"/>');
+      $scope.selectedCountry = undefined;
+      $scope.countries = [
+        {name: 'Afghanistan', code: 'AF'},
+        {name: 'Aland Islands', code: 'AX'},
+        {name: 'Albania', code: 'AL'}
+      ];
+      $compile(element)($scope);
+      $scope.$digest();
+      spyOn(element.isolateScope(), '$emit');
+
+      var inputField = element.find('#ex1_value');
+      var e = $.Event('keyup');
+      e.which = 97; // letter: a
+
+      inputField.val('a');
+      inputField.trigger('input');
+      inputField.trigger(e);
+      $timeout.flush();
+      expect(element.find('#ex1_dropdown').length).toBe(1);
+
+      element.find('.angucomplete-row').click();
+      $scope.$digest();
+      expect($scope.selectedCountry.originalObject).toEqual($scope.countries[0]);
+      $scope.$digest();
+      expect(element.isolateScope().$emit).toHaveBeenCalled();
+    });
+  });
+
   describe('TAB for selecting', function() {
     it('should select the selected suggestion when TAB is pressed', function() {
       var element = angular.element('<div angucomplete-alt id="ex1" placeholder="Search countries" selected-object="selectedCountry" local-data="countries" search-fields="name" title-field="name" minlength="1"/>');
@@ -898,6 +929,7 @@ describe('angucomplete-alt', function() {
 
   describe('override suggestions', function() {
     it('should override suggestions when enter is pressed but no suggestion is selected', function() {
+
       var element = angular.element('<div angucomplete-alt id="ex1" placeholder="Search countries" selected-object="selectedCountry" local-data="countries" search-fields="name" title-field="name" minlength="1" override-suggestions="true"/>');
       $scope.selectedCountry = undefined;
       $scope.countries = [
@@ -907,6 +939,7 @@ describe('angucomplete-alt', function() {
       ];
       $compile(element)($scope);
       $scope.$digest();
+      spyOn(element.isolateScope(), '$emit');
 
       var inputField = element.find('#ex1_value');
       var e = $.Event('keyup');
@@ -924,6 +957,7 @@ describe('angucomplete-alt', function() {
       expect($scope.selectedCountry.originalObject).toEqual('abc');
       inputField.blur();
       expect(element.find('#ex1_dropdown').hasClass('ng-hide')).toBeTruthy();
+      expect(element.isolateScope().$emit).toHaveBeenCalled();
     });
 
     it('should override suggestions when enter is pressed but no suggestion is selected also incorporate with clear-selected if it is set', function() {
@@ -934,7 +968,7 @@ describe('angucomplete-alt', function() {
         {name: 'Aland Islands', code: 'AX'},
         {name: 'Albania', code: 'AL'}
       ];
-      $compile(element)($scope);
+      element = $compile(element)($scope);
       $scope.$digest();
 
       var inputField = element.find('#ex1_value');
@@ -1768,6 +1802,4 @@ describe('angucomplete-alt', function() {
 
     });
   });
-
-
 });

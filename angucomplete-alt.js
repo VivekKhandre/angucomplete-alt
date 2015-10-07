@@ -252,7 +252,7 @@
               if (!scope.searchStr || scope.searchStr === '') {
                 scope.showDropdown = false;
               } else if (scope.searchStr.length >= minlength) {
-                updateResults();
+                initResults();
                 if (searchTimer) {
                   $timeout.cancel(searchTimer);
                 }
@@ -336,6 +336,7 @@
                 clearResults();
               }
               scope.$apply();
+              scope.$emit('angucomplete_KEY_EN');
             } else if (which === KEY_DW && scope.results && scope.results.length > 0) {
               event.preventDefault();
               if ((scope.currentIndex + 1) < scope.results.length && scope.showDropdown) {
@@ -494,13 +495,9 @@
           }
 
           function initResults() {
-            updateResults();
-            scope.results = [];
-          }
-
-          function updateResults(){
             scope.showDropdown = displaySearching;
             scope.currentIndex = scope.focusFirst ? 0 : -1;
+            scope.results = [];
           }
 
           function getLocalResults(str) {
@@ -663,6 +660,11 @@
 
           scope.hoverRow = function (index) {
             scope.currentIndex = index;
+          };
+
+          scope.selectResultWithClick = function (result) {
+            scope.selectResult(result);
+            scope.$emit('angucomplete_MOUSE_SELECT');
           };
 
           scope.selectResult = function (result) {
@@ -844,7 +846,7 @@
         '  <div id="{{id}}_dropdown" class="angucomplete-dropdown" ng-show="showDropdown">' +
         '    <div class="angucomplete-searching" ng-show="searching" ng-bind="textSearching"></div>' +
         '    <div class="angucomplete-searching" ng-show="!searching && (!results || results.length == 0)" ng-bind="textNoResults"></div>' +
-        '    <div class="angucomplete-row" ng-repeat="result in results" ng-click="selectResult(result)" ng-mouseenter="hoverRow($index)" ng-class="{\'angucomplete-selected-row\': $index == currentIndex}">' +
+        '    <div class="angucomplete-row" ng-repeat="result in results" ng-click="selectResultWithClick(result)" ng-mouseenter="hoverRow($index)" ng-class="{\'angucomplete-selected-row\': $index == currentIndex}">' +
         '      <div ng-if="imageField" class="angucomplete-image-holder">' +
         '        <img ng-if="result.image && result.image != \'\'" ng-src="{{result.image}}" class="angucomplete-image"/>' +
         '        <div ng-if="!result.image && result.image != \'\'" class="angucomplete-image-default"></div>' +
@@ -859,7 +861,7 @@
 
       return {
         restrict: 'EA',
-        scope: true,
+        scope: false,
         replace: true,
         templateUrl: function (element, attrs) {
           return attrs.templateUrl || TEMPLATE_DROPDOWN_URL;
