@@ -64,12 +64,14 @@
           var responseFormatter;
           var validState = null;
           var httpCanceller = null;
-          var dd = angular.element('.angucomplete-dropdown');
+          var dd = null;
           var isScrollOn = false;
           var mousedownOn = null;
           var unbindInitialValue;
           var displaySearching;
           var displayNoResults;
+          var dropdownEl;
+          var compiledDropdownEl;
 
           elem.on('mousedown', function (event) {
             if (event.target.id) {
@@ -105,12 +107,11 @@
             }
           });
 
-          var popUpEl;
           //pop-up element used to display matches
           if(scope.templateDropdownUrl) {
-            popUpEl = angular.element('<div auto-suggestion-popup template-url="' + scope.templateDropdownUrl+ '"></div>');
+            dropdownEl = angular.element('<div angucomplete-alt-dropdown template-url="' + scope.templateDropdownUrl+ '"></div>');
           } else {
-            popUpEl = angular.element('<div auto-suggestion-popup></div>');
+            dropdownEl = angular.element('<div angucomplete-alt-dropdown></div>');
           }
 
 
@@ -353,11 +354,8 @@
                 }
               }
               else {
-                if ((scope.currentIndex === 0) < scope.results.length && scope.showDropdown) {
-                  scope.$apply(function () {
-                    scope.currentIndex = -1;
-                    inputField.val(scope.searchStr);
-                  });
+                if (scope.currentIndex + 1 === scope.results.length && scope.showDropdown) {
+                  restoreSearchStr();
                 }
               }
 
@@ -377,10 +375,7 @@
                 }
               }
               else if (scope.currentIndex === 0) {
-                scope.$apply(function () {
-                  scope.currentIndex = -1;
-                  inputField.val(scope.searchStr);
-                });
+                restoreSearchStr();
               }
               else if (scope.currentIndex === -1) {
                 scope.$apply(function () {
@@ -414,6 +409,13 @@
                 }
               }
             }
+          }
+
+          function restoreSearchStr() {
+            scope.$apply(function () {
+              scope.currentIndex = -1;
+              inputField.val(scope.searchStr);
+            });
           }
 
           function httpSuccessCallbackGen(str) {
@@ -664,7 +666,7 @@
 
           scope.selectResultWithClick = function (result) {
             scope.selectResult(result);
-            scope.$emit('angucomplete_MOUSE_SELECT');
+            scope.$emit('angucomplete_CLICK_SELECT');
           };
 
           scope.selectResult = function (result) {
@@ -756,26 +758,24 @@
           scope.$on('$destroy', function () {
             // take care of required validity when it gets destroyed
             handleRequired(true);
-            if (scope.bindDropdownSelector) {
-              $popup.remove();
-            }
+            compiledDropdownEl.remove();
             // Prevent jQuery cache memory leak
-            popUpEl.remove();
+            dropdownEl.remove();
           });
 
-          var $popup = $compile(popUpEl)(scope);
+          compiledDropdownEl = $compile(dropdownEl)(scope);
 
           if(scope.bindDropdownSelector) {
-            angular.element(scope.bindDropdownSelector).append($popup);
+            angular.element(scope.bindDropdownSelector).append(compiledDropdownEl);
           } else {
-            inputField.after($popup);
+            inputField.after(compiledDropdownEl);
           }
 
-          dd = $popup;
+          dd = compiledDropdownEl;
 
           // set isScrollOn
           $timeout(function () {
-            var css = getComputedStyle($popup[0]);
+            var css = getComputedStyle(compiledDropdownEl[0]);
             isScrollOn = css.maxHeight && css.overflowY === 'auto';
           });
 
@@ -837,7 +837,7 @@
           }
         };
       }])
-    .directive('autoSuggestionPopup', ['$templateCache', function($templateCache) {
+    .directive('angucompleteAltDropdown', ['$templateCache', function($templateCache) {
 
       var TEMPLATE_DROPDOWN_URL = '/angucomplete-alt/dropdown.html';
 
