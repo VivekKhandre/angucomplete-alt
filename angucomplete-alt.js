@@ -354,7 +354,7 @@
                 }
               }
               else {
-                if (scope.currentIndex + 1 == scope.results.length && scope.showDropdown) {
+                if (scope.currentIndex + 1 === scope.results.length && scope.showDropdown) {
                   restoreSearchStr();
                 }
               }
