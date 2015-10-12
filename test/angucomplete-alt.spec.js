@@ -1758,25 +1758,33 @@ describe('angucomplete-alt', function() {
   });
 
   describe('bindDropdownSelector', function() {
+
+    var spy, mockElement;
+
+    beforeEach(function() {
+      mockElement = angular.element('<div class="bindhere"></div>');
+    });
+
+    afterEach(function() {
+      spy.andCallThrough();
+    });
+
     it('should be handled by angucomplete-alt directive', function() {
-      var element = angular.element('<div class="group"><div class="bindhere"></div><div class="angucomplete" angucomplete-alt id="ex1" placeholder="Search people" selected-object="selectedPerson" local-data="people" search-fields="name" title-field="name" minlength="1" bindDropdownSelector=".bindhere"></div></div>');
+      var element = angular.element('<div class="angucomplete" angucomplete-alt id="ex1" placeholder="Search people" selected-object="selectedPerson" local-data="people" search-fields="name" title-field="name" minlength="1" bind-dropdown-selector=".bindhere"></div>');
       $scope.selectedPerson = undefined;
       $scope.people = [
         {name: 'Jim Beam', email: 'jbeam@example.com'},
         {name: 'Elvis Presly', email: 'theking@example.com'},
         {name: 'John Elway', email: 'elway@example.com'}
       ];
+      spy = spyOn(angular, 'element').andReturn(mockElement);
+      spyOn(mockElement, 'append');
+      $compile(mockElement)($scope);
       $compile(element)($scope);
       $scope.$digest();
 
-      var bindHereElement = element.find('.bindhere');
-      $scope.$digest();
-
-      expect(element.hasClass('group')).toBeTruthy();
-      expect(bindHereElement).toBeTruthy();
-      expect(bindHereElement.children().length).toBe(0);
-      expect(element.children().hasClass('angucomplete')).toBeTruthy();
-      expect(element.find('.angucomplete-dropdown').length).toBe(1);
+      expect(element.find('.angucomplete-holder').length).toBe(1);
+      expect(mockElement.append).toHaveBeenCalled();
     });
   });
 
