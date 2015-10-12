@@ -1286,6 +1286,41 @@ describe('angucomplete-alt', function() {
       $timeout.flush();
       expect(element.find('.angucomplete-row').length).toBe(3);
     });
+
+    it('should do nothing when no suggestions', function() {
+      var element = angular.element('<div angucomplete-alt id="ex1" placeholder="Search countries" selected-object="countrySelected" local-data="countries" search-fields="name" title-field="name" minlength="1"/>');
+      $scope.countrySelected = null;
+      $scope.countries = [
+        {name: 'Afghanistan', code: 'AF'},
+        {name: 'Aland Islands', code: 'AX'},
+        {name: 'Albania', code: 'AL'}
+      ];
+      $compile(element)($scope);
+      $scope.$digest();
+
+      var inputField = element.find('#ex1_value');
+      var eKeyup = $.Event('keyup');
+      eKeyup.which = 99; // letter: c
+
+      inputField.val('c');
+      inputField.trigger('input');
+      inputField.trigger(eKeyup);
+      $timeout.flush();
+      expect(element.find('.angucomplete-row').length).toBe(0);
+
+      // Down arrow
+      inputField.focus();
+      eKeyup.which = KEY_DW;
+      inputField.trigger('input');
+      inputField.trigger(eKeyup);
+      $timeout.flush();
+      expect(element.find('.angucomplete-row').length).toBe(0);
+
+      // Up arrow
+      eKeyup.which = KEY_UP;
+      inputField.trigger(eKeyup);
+      expect(element.find('.angucomplete-row').length).toBe(0);
+    });
   });
 
   describe('Clear input', function() {
