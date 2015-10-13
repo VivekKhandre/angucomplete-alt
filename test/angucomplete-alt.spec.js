@@ -1251,6 +1251,39 @@ describe('angucomplete-alt', function() {
     });
   });
 
+  describe('suggestOnFocus', function() {
+    it('should query again when input has focus', function() {
+      var element = angular.element('<div angucomplete-alt id="ex1" placeholder="Search countries" selected-object="countrySelected" local-data="countries" search-fields="name" title-field="name" minlength="1" suggest-on-focus="true"/>');
+      $scope.countrySelected = null;
+      $scope.countries = [
+        {name: 'Afghanistan', code: 'AF'},
+        {name: 'Aland Islands', code: 'AX'},
+        {name: 'Albania', code: 'AL'}
+      ];
+      $compile(element)($scope);
+      $scope.$digest();
+
+      var inputField = element.find('#ex1_value');
+      var eKeyup = $.Event('keyup');
+      eKeyup.which = 97; // letter: a
+
+      inputField.val('a');
+      inputField.trigger('input');
+      inputField.trigger(eKeyup);
+      $timeout.flush();
+      expect(element.find('.angucomplete-row').length).toBe(3);
+
+      // ESC once
+      eKeyup.which = KEY_ES;
+      inputField.trigger(eKeyup);
+      expect(element.find('.angucomplete-row').length).toBe(0);
+
+      inputField.triggerHandler('focus');
+      $timeout.flush();
+      expect(element.find('.angucomplete-row').length).toBe(3);
+    });
+  });
+
   describe('key event handling', function() {
     it('should query again when down arrow key is pressed', function() {
       var element = angular.element('<div angucomplete-alt id="ex1" placeholder="Search countries" selected-object="countrySelected" local-data="countries" search-fields="name" title-field="name" minlength="1"/>');
