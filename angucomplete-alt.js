@@ -253,16 +253,7 @@
               if (!scope.searchStr || scope.searchStr === '') {
                 scope.showDropdown = false;
               } else if (scope.searchStr.length >= minlength) {
-                initResults();
-                if (searchTimer) {
-                  $timeout.cancel(searchTimer);
-                }
-
-                scope.searching = true;
-
-                searchTimer = $timeout(function () {
-                  searchTimerComplete(scope.searchStr);
-                }, scope.pause);
+                searchWithPause();
               }
 
               if (validState && validState !== scope.searchStr && !scope.clearSelected) {
@@ -537,6 +528,19 @@
             return false;
           }
 
+          function searchWithPause() {
+            initResults();
+            if (searchTimer) {
+              $timeout.cancel(searchTimer);
+            }
+
+            scope.searching = true;
+
+            searchTimer = $timeout(function () {
+              searchTimerComplete(scope.searchStr);
+            }, scope.pause);
+          }
+
           function searchTimerComplete(str) {
             // Begin the search
             if (!str || str.length < minlength) {
@@ -622,6 +626,10 @@
               scope.currentIndex = scope.focusFirst ? 0 : scope.currentIndex;
               scope.showDropdown = true;
               showAll();
+            }
+
+            if (scope.suggestOnFocus && scope.searchStr && scope.searchStr.length >= minlength) {
+              searchWithPause();
             }
           };
 
@@ -819,7 +827,8 @@
             inputName: '@',
             focusFirst: '@',
             'bindDropdownSelector': '@',
-            'templateDropdownUrl': '@'
+            'templateDropdownUrl': '@',
+            'suggestOnFocus': '@'
           },
           templateUrl: function (element, attrs) {
             return attrs.templateUrl || TEMPLATE_URL;
