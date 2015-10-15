@@ -25,15 +25,15 @@
 
   angular.module('angucomplete-alt', []).directive('angucompleteAlt', ['$q', '$parse', '$http', '$sce', '$timeout', '$templateCache', '$interpolate', function ($q, $parse, $http, $sce, $timeout, $templateCache, $interpolate) {
     // keyboard events
-    var KEY_DW  = 40;
-    var KEY_RT  = 39;
-    var KEY_UP  = 38;
-    var KEY_LF  = 37;
-    var KEY_ES  = 27;
-    var KEY_EN  = 13;
-    var KEY_BS  =  8;
+    var KEY_DW = 40;
+    var KEY_RT = 39;
+    var KEY_UP = 38;
+    var KEY_LF = 37;
+    var KEY_ES = 27;
+    var KEY_EN = 13;
+    var KEY_BS = 8;
     var KEY_DEL = 46;
-    var KEY_TAB =  9;
+    var KEY_TAB = 9;
 
     var MIN_LENGTH = 3;
     var MAX_LENGTH = 524288;  // the default max length per the html maxlength attribute
@@ -48,23 +48,23 @@
 
     // Set the default template for this directive
     $templateCache.put(TEMPLATE_URL,
-        '<div class="angucomplete-holder" ng-class="{\'angucomplete-dropdown-visible\': showDropdown}">' +
-        '  <input id="{{id}}_value" name="{{inputName}}" ng-class="{\'angucomplete-input-not-empty\': notEmpty}" ng-model="searchStr" ng-disabled="disableInput" type="{{inputType}}" placeholder="{{placeholder}}" maxlength="{{maxlength}}" ng-focus="onFocusHandler()" class="{{inputClass}}" ng-focus="resetHideResults()" ng-blur="hideResults($event)" autocapitalize="off" autocorrect="off" autocomplete="off" ng-change="inputChangeHandler(searchStr)"/>' +
-        '  <div id="{{id}}_dropdown" class="angucomplete-dropdown" ng-show="showDropdown">' +
-        '    <div class="angucomplete-searching" ng-show="searching" ng-bind="textSearching"></div>' +
-        '    <div class="angucomplete-searching" ng-show="!searching && (!results || results.length == 0)" ng-bind="textNoResults"></div>' +
-        '    <div class="angucomplete-row" ng-repeat="result in results" ng-click="selectResult(result)" ng-mouseenter="hoverRow($index)" ng-class="{\'angucomplete-selected-row\': $index == currentIndex}">' +
-        '      <div ng-if="imageField" class="angucomplete-image-holder">' +
-        '        <img ng-if="result.image && result.image != \'\'" ng-src="{{result.image}}" class="angucomplete-image"/>' +
-        '        <div ng-if="!result.image && result.image != \'\'" class="angucomplete-image-default"></div>' +
-        '      </div>' +
-        '      <div class="angucomplete-title" ng-if="matchClass" ng-bind-html="result.title"></div>' +
-        '      <div class="angucomplete-title" ng-if="!matchClass">{{ result.title }}</div>' +
-        '      <div ng-if="matchClass && result.description && result.description != \'\'" class="angucomplete-description" ng-bind-html="result.description"></div>' +
-        '      <div ng-if="!matchClass && result.description && result.description != \'\'" class="angucomplete-description">{{result.description}}</div>' +
-        '    </div>' +
-        '  </div>' +
-        '</div>'
+      '<div class="angucomplete-holder" ng-class="{\'angucomplete-dropdown-visible\': showDropdown}">' +
+      '  <input id="{{id}}_value" name="{{inputName}}" ng-class="{\'angucomplete-input-not-empty\': notEmpty}" ng-model="searchStr" ng-disabled="disableInput" type="{{inputType}}" placeholder="{{placeholder}}" maxlength="{{maxlength}}" ng-focus="onFocusHandler()" class="{{inputClass}}" ng-focus="resetHideResults()" ng-blur="hideResults($event)" autocapitalize="off" autocorrect="off" autocomplete="off" ng-change="inputChangeHandler(searchStr)"/>' +
+      '  <div id="{{id}}_dropdown" class="angucomplete-dropdown" ng-show="showDropdown">' +
+      '    <div class="angucomplete-searching" ng-show="searching" ng-bind="textSearching"></div>' +
+      '    <div class="angucomplete-searching" ng-show="!searching && (!results || results.length == 0)" ng-bind="textNoResults"></div>' +
+      '    <div class="angucomplete-row" ng-repeat="result in results" ng-click="selectResult(result)" ng-mouseenter="hoverRow($index)" ng-class="{\'angucomplete-selected-row\': $index == currentIndex}">' +
+      '      <div ng-if="imageField" class="angucomplete-image-holder">' +
+      '        <img ng-if="result.image && result.image != \'\'" ng-src="{{result.image}}" class="angucomplete-image"/>' +
+      '        <div ng-if="!result.image && result.image != \'\'" class="angucomplete-image-default"></div>' +
+      '      </div>' +
+      '      <div class="angucomplete-title" ng-if="matchClass" ng-bind-html="result.title"></div>' +
+      '      <div class="angucomplete-title" ng-if="!matchClass">{{ result.title }}</div>' +
+      '      <div ng-if="matchClass && result.description && result.description != \'\'" class="angucomplete-description" ng-bind-html="result.description"></div>' +
+      '      <div ng-if="!matchClass && result.description && result.description != \'\'" class="angucomplete-description">{{result.description}}</div>' +
+      '    </div>' +
+      '  </div>' +
+      '</div>'
     );
 
     function link(scope, elem, attrs, ctrl) {
@@ -83,7 +83,7 @@
       var displaySearching;
       var displayNoResults;
 
-      elem.on('mousedown', function(event) {
+      elem.on('mousedown', function (event) {
         if (event.target.id) {
           mousedownOn = event.target.id;
           if (mousedownOn === scope.id + '_dropdown') {
@@ -97,7 +97,7 @@
 
       scope.currentIndex = scope.focusFirst ? 0 : null;
       scope.searching = false;
-      unbindInitialValue = scope.$watch('initialValue', function(newval, oldval) {
+      unbindInitialValue = scope.$watch('initialValue', function (newval, oldval) {
         if (newval) {
           // remove scope listener
           unbindInitialValue();
@@ -106,7 +106,7 @@
         }
       });
 
-      scope.$watch('fieldRequired', function(newval, oldval) {
+      scope.$watch('fieldRequired', function (newval, oldval) {
         if (newval !== oldval) {
           if (!newval) {
             ctrl[scope.inputName].$setValidity(requiredClassName, true);
@@ -181,7 +181,7 @@
       }
 
       function callFunctionOrIdentity(fn) {
-        return function(data) {
+        return function (data) {
           return scope[fn] ? scope[fn](data) : data;
         };
       }
@@ -198,7 +198,7 @@
       function extractTitle(data) {
         // split title fields and run extractValue for each and join with ' '
         return scope.titleField.split(',')
-          .map(function(field) {
+          .map(function (field) {
             return extractValue(data, field);
           })
           .join(' ');
@@ -207,7 +207,7 @@
       function extractValue(obj, key) {
         var keys, result;
         if (key) {
-          keys= key.split('.');
+          keys = key.split('.');
           result = obj;
           for (var i = 0; i < keys.length; i++) {
             result = result[keys[i]];
@@ -224,12 +224,16 @@
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
         // Escape user input to be treated as a literal string within a regular expression
         re = new RegExp(str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
-        if (!target) { return; }
-        if (!target.match || !target.replace) { target = target.toString(); }
+        if (!target) {
+          return;
+        }
+        if (!target.match || !target.replace) {
+          target = target.toString();
+        }
         matches = target.match(re);
         if (matches) {
           result = target.replace(re,
-              '<span class="'+ scope.matchClass +'">'+ matches[0] +'</span>');
+            '<span class="' + scope.matchClass + '">' + matches[0] + '</span>');
         }
         else {
           result = target;
@@ -265,7 +269,7 @@
         }
         else if (which === KEY_ES) {
           clearResults();
-          scope.$apply(function() {
+          scope.$apply(function () {
             inputField.val(scope.searchStr);
           });
         }
@@ -285,13 +289,13 @@
 
             scope.searching = true;
 
-            searchTimer = $timeout(function() {
+            searchTimer = $timeout(function () {
               searchTimerComplete(scope.searchStr);
             }, scope.pause);
           }
 
           if (validState && validState !== scope.searchStr && !scope.clearSelected) {
-            scope.$apply(function() {
+            scope.$apply(function () {
               callOrAssign();
             });
           }
@@ -299,8 +303,7 @@
       }
 
       function handleOverrideSuggestions(event) {
-        if (scope.overrideSuggestions &&
-            !(scope.selectedObject && scope.selectedObject.originalObject === scope.searchStr)) {
+        if (scope.overrideSuggestions && !(scope.selectedObject && scope.selectedObject.originalObject === scope.searchStr)) {
           if (event) {
             event.preventDefault();
           }
@@ -332,14 +335,14 @@
       function dropdownRowTop() {
         return dropdownRow().getBoundingClientRect().top -
           (dd.getBoundingClientRect().top +
-           parseInt(getComputedStyle(dd).paddingTop, 10));
+          parseInt(getComputedStyle(dd).paddingTop, 10));
       }
 
       function dropdownScrollTopTo(offset) {
         dd.scrollTop = dd.scrollTop + offset;
       }
 
-      function updateInputField(){
+      function updateInputField() {
         var current = scope.results[scope.currentIndex];
         if (scope.matchClass) {
           inputField.val(extractTitle(current.originalObject));
@@ -366,8 +369,8 @@
         } else if (which === KEY_DW && scope.results) {
           event.preventDefault();
           if ((scope.currentIndex + 1) < scope.results.length && scope.showDropdown) {
-            scope.$apply(function() {
-              scope.currentIndex ++;
+            scope.$apply(function () {
+              scope.currentIndex++;
               updateInputField();
             });
 
@@ -381,8 +384,8 @@
         } else if (which === KEY_UP && scope.results) {
           event.preventDefault();
           if (scope.currentIndex >= 1) {
-            scope.$apply(function() {
-              scope.currentIndex --;
+            scope.$apply(function () {
+              scope.currentIndex--;
               updateInputField();
             });
 
@@ -394,7 +397,7 @@
             }
           }
           else if (scope.currentIndex === 0) {
-            scope.$apply(function() {
+            scope.$apply(function () {
               scope.currentIndex = -1;
               inputField.val(scope.searchStr);
             });
@@ -430,7 +433,7 @@
       }
 
       function httpSuccessCallbackGen(str) {
-        return function(responseData, status, headers, config) {
+        return function (responseData, status, headers, config) {
           // normalize return obejct from promise
           if (!status && !headers && !config) {
             responseData = responseData.data;
@@ -444,7 +447,9 @@
 
       function httpErrorCallback(errorRes, status, headers, config) {
         // cancelled/aborted
-        if (status === 0 || status === -1) { return; }
+        if (status === 0 || status === -1) {
+          return;
+        }
 
         // normalize return obejct from promise
         if (!status && !headers && !config) {
@@ -468,7 +473,7 @@
 
       function getRemoteResults(str) {
         var params = {},
-            url = scope.remoteUrl + encodeURIComponent(str);
+          url = scope.remoteUrl + encodeURIComponent(str);
         if (scope.remoteUrlRequestFormatter) {
           params = {params: scope.remoteUrlRequestFormatter(str)};
           url = scope.remoteUrl;
@@ -494,10 +499,10 @@
           .catch(httpErrorCallback);
 
         /* IE8 compatible
-        scope.remoteApiHandler(str, httpCanceller.promise)
-          ['then'](httpSuccessCallbackGen(str))
-          ['catch'](httpErrorCallback);
-        */
+         scope.remoteApiHandler(str, httpCanceller.promise)
+         ['then'](httpSuccessCallbackGen(str))
+         ['catch'](httpErrorCallback);
+         */
       }
 
       function clearResults() {
@@ -516,8 +521,8 @@
 
       function getLocalResults(str) {
         var i, match, s, value,
-            searchFields = scope.searchFields.split(','),
-            matches = [];
+          searchFields = scope.searchFields.split(','),
+          matches = [];
 
         for (i = 0; i < scope.localData.length; i++) {
           match = false;
@@ -536,10 +541,12 @@
         processResults(matches, str);
       }
 
-      function checkExactMatch(result, obj, str){
-        if (!str) { return false; }
-        for(var key in obj){
-          if(obj[key].toLowerCase() === str.toLowerCase()){
+      function checkExactMatch(result, obj, str) {
+        if (!str) {
+          return false;
+        }
+        for (var key in obj) {
+          if (obj[key].toLowerCase() === str.toLowerCase()) {
             scope.selectResult(result);
             return true;
           }
@@ -553,7 +560,7 @@
           return;
         }
         if (scope.localData) {
-          scope.$apply(function() {
+          scope.$apply(function () {
             getLocalResults(str);
           });
         }
@@ -603,8 +610,8 @@
         }
 
         if (scope.autoMatch && scope.results.length === 1 &&
-            checkExactMatch(scope.results[0],
-              {title: text, desc: description || ''}, scope.searchStr)) {
+          checkExactMatch(scope.results[0],
+            {title: text, desc: description || ''}, scope.searchStr)) {
           scope.showDropdown = false;
         } else if (scope.results.length === 0 && !displayNoResults) {
           scope.showDropdown = false;
@@ -625,7 +632,7 @@
         }
       }
 
-      scope.onFocusHandler = function() {
+      scope.onFocusHandler = function () {
         if (scope.focusIn) {
           scope.focusIn();
         }
@@ -636,16 +643,16 @@
         }
       };
 
-      scope.hideResults = function(event) {
+      scope.hideResults = function (event) {
         if (mousedownOn &&
-            (mousedownOn === scope.id + '_dropdown' ||
-             mousedownOn.indexOf('angucomplete') >= 0)) {
+          (mousedownOn === scope.id + '_dropdown' ||
+          mousedownOn.indexOf('angucomplete') >= 0)) {
           mousedownOn = null;
         }
         else {
-          hideTimer = $timeout(function() {
+          hideTimer = $timeout(function () {
             clearResults();
-            scope.$apply(function() {
+            scope.$apply(function () {
               if (scope.searchStr && scope.searchStr.length > 0) {
                 inputField.val(scope.searchStr);
               }
@@ -665,17 +672,17 @@
         }
       };
 
-      scope.resetHideResults = function() {
+      scope.resetHideResults = function () {
         if (hideTimer) {
           $timeout.cancel(hideTimer);
         }
       };
 
-      scope.hoverRow = function(index) {
+      scope.hoverRow = function (index) {
         scope.currentIndex = index;
       };
 
-      scope.selectResult = function(result) {
+      scope.selectResult = function (result) {
         // Restore original values
         if (scope.matchClass) {
           result.title = extractTitle(result.originalObject);
@@ -692,7 +699,7 @@
         clearResults();
       };
 
-      scope.inputChangeHandler = function(str) {
+      scope.inputChangeHandler = function (str) {
         if (str.length < minlength) {
           cancelHttpRequest();
           clearResults();
@@ -762,13 +769,13 @@
       // set response formatter
       responseFormatter = callFunctionOrIdentity('remoteUrlResponseFormatter');
 
-      scope.$on('$destroy', function() {
+      scope.$on('$destroy', function () {
         // take care of required validity when it gets destroyed
         handleRequired(true);
       });
 
       // set isScrollOn
-      $timeout(function() {
+      $timeout(function () {
         var css = getComputedStyle(dd);
         isScrollOn = css.maxHeight && css.overflowY === 'auto';
       });
@@ -811,10 +818,10 @@
         inputName: '@',
         focusFirst: '@'
       },
-      templateUrl: function(element, attrs) {
+      templateUrl: function (element, attrs) {
         return attrs.templateUrl || TEMPLATE_URL;
       },
-      compile: function(tElement, tAttrs) {
+      compile: function (tElement, tAttrs) {
         var startSym = $interpolate.startSymbol();
         var endSym = $interpolate.endSymbol();
         if (!(startSym === '{{' && endSym === '}}')) {
