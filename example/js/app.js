@@ -275,6 +275,8 @@ app.controller('MainController', ['$scope', '$http', '$rootScope',
       }
     }
 
+    $scope.selectedCountry16 = {name: 'Russia'};
+
     $scope.inputChanged = function(str) {
       $scope.console10 = str;
     }
@@ -305,6 +307,21 @@ app.controller('MainController', ['$scope', '$http', '$rootScope',
       }
     }
 
+    /***
+     * Send a broadcast to the directive in order to change itself
+     * if an id parameter is given only this ancucomplete is changed
+     * @param id
+     */
+    $scope.changeInput = function (id) {
+      if (id) {
+        var pos = Math.floor(Math.random() * ($scope.countries.length - 1));
+        $scope.$broadcast('angucomplete-alt:changeInput', id, $scope.countries[pos]);
+      }
+    }
+
     $scope.disableInput = true;
+
+    $scope.requireExample8a = true;
+    $scope.requireExample8b = true;
   }
 ]);
