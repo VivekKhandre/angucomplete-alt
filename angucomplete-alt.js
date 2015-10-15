@@ -98,22 +98,25 @@
       scope.currentIndex = scope.focusFirst ? 0 : null;
       scope.searching = false;
       unbindInitialValue = scope.$watch('initialValue', function(newval, oldval) {
-
         if (newval) {
+          // remove scope listener
           unbindInitialValue();
+          // change input
+          handleInputChange(newval, true);
+        }
+      });
 
-          if (typeof newval === 'object') {
-            scope.searchStr = extractTitle(newval);
-            callOrAssign({originalObject: newval});
-          } else if (typeof newval === 'string' && newval.length > 0) {
-            scope.searchStr = newval;
-          } else {
-            if (console && console.error) {
-              console.error('Tried to set initial value of angucomplete to', newval, 'which is an invalid value');
-            }
+      scope.$watch('fieldRequired', function(newval, oldval) {
+        if (newval !== oldval) {
+          if (!newval) {
+            ctrl[scope.inputName].$setValidity(requiredClassName, true);
           }
-
-          handleRequired(true);
+          else if (!validState || scope.currentIndex === -1) {
+            handleRequired(false);
+          }
+          else {
+            handleRequired(true);
+          }
         }
       });
 
@@ -125,6 +128,29 @@
           clearResults();
         }
       });
+
+      scope.$on('angucomplete-alt:changeInput', function (event, elementId, newval) {
+        if (!!elementId && elementId === scope.id) {
+          handleInputChange(newval);
+        }
+      });
+
+      function handleInputChange(newval, initial) {
+        if (newval) {
+          if (typeof newval === 'object') {
+            scope.searchStr = extractTitle(newval);
+            callOrAssign({originalObject: newval});
+          } else if (typeof newval === 'string' && newval.length > 0) {
+            scope.searchStr = newval;
+          } else {
+            if (console && console.error) {
+              console.error('Tried to set ' + (!!initial ? 'initial' : '') + ' value of angucomplete to', newval, 'which is an invalid value');
+            }
+          }
+
+          handleRequired(true);
+        }
+      }
 
       // #194 dropdown list not consistent in collapsing (bug).
       function clickoutHandlerForDropdown(event) {
@@ -214,8 +240,8 @@
       function handleRequired(valid) {
         scope.notEmpty = valid;
         validState = scope.searchStr;
-        if (scope.fieldRequired && ctrl) {
-          ctrl.$setValidity(requiredClassName, valid);
+        if (scope.fieldRequired && ctrl && scope.inputName) {
+          ctrl[scope.inputName].$setValidity(requiredClassName, valid);
         }
       }
 
@@ -396,6 +422,10 @@
               handleOverrideSuggestions();
             }
           }
+        } else if (which === KEY_ES) {
+          // This is very specific to IE10/11 #272
+          // without this, IE clears the input text
+          event.preventDefault();
         }
       }
 
@@ -413,18 +443,19 @@
       }
 
       function httpErrorCallback(errorRes, status, headers, config) {
+        // cancelled/aborted
+        if (status === 0 || status === -1) { return; }
+
         // normalize return obejct from promise
         if (!status && !headers && !config) {
           status = errorRes.status;
         }
-        if (status !== 0) {
-          if (scope.remoteUrlErrorCallback) {
-            scope.remoteUrlErrorCallback(errorRes, status, headers, config);
-          }
-          else {
-            if (console && console.error) {
-              console.error('http error');
-            }
+        if (scope.remoteUrlErrorCallback) {
+          scope.remoteUrlErrorCallback(errorRes, status, headers, config);
+        }
+        else {
+          if (console && console.error) {
+            console.error('http error');
           }
         }
       }
@@ -663,6 +694,7 @@
 
       scope.inputChangeHandler = function(str) {
         if (str.length < minlength) {
+          cancelHttpRequest();
           clearResults();
         }
         else if (str.length === 0 && minlength === 0) {
@@ -725,7 +757,7 @@
 
       // register events
       inputField.on('keydown', keydownHandler);
-      inputField.on('keyup input', keyupHandler);
+      inputField.on('keyup', keyupHandler);
 
       // set response formatter
       responseFormatter = callFunctionOrIdentity('remoteUrlResponseFormatter');
@@ -770,7 +802,7 @@
         matchClass: '@',
         clearSelected: '@',
         overrideSuggestions: '@',
-        fieldRequired: '@',
+        fieldRequired: '=',
         fieldRequiredClass: '@',
         inputChanged: '=',
         autoMatch: '@',
