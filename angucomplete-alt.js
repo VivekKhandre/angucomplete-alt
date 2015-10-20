@@ -348,7 +348,7 @@
             clearResults();
           }
           scope.$apply();
-          scope.$emit('angucomplete_KEY_EN');
+          scope.$emit('angucomplete_key_en');
         } else if (which === KEY_DW && scope.results && scope.results.length > 0) {
           event.preventDefault();
           if ((scope.currentIndex + 1) < scope.results.length && scope.showDropdown) {
@@ -698,7 +698,7 @@
 
       scope.selectResultWithClick = function (result) {
         scope.selectResult(result);
-        scope.$emit('angucomplete_CLICK_SELECT');
+        scope.$emit('angucomplete_click_select');
       };
 
       scope.selectResult = function (result) {
