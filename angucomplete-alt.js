@@ -799,7 +799,9 @@
       compiledDropdownEl = $compile(dropdownEl)(scope);
 
       if (scope.bindDropdownSelector) {
-        angular.element(scope.bindDropdownSelector).append(compiledDropdownEl);
+        $timeout(function () {
+          angular.element(scope.bindDropdownSelector).append(compiledDropdownEl);
+        });
       } else {
         inputField.after(compiledDropdownEl);
       }

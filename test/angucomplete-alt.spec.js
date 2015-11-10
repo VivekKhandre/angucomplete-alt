@@ -1903,6 +1903,7 @@ describe('angucomplete-alt', function() {
       $scope.$digest();
 
       expect(element.find('.angucomplete-holder').length).toBe(1);
+      $timeout.flush();
       expect(mockElement.append).toHaveBeenCalled();
     });
   });
