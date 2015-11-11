@@ -894,9 +894,9 @@
       );
 
       return {
-        restrict: 'EA',
+        restrict: 'A',
         scope: false,
-        replace: true,
+        replace: false,
         templateUrl: function (element, attrs) {
           return attrs.templateUrl || TEMPLATE_DROPDOWN_URL;
         },
