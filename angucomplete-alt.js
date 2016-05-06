@@ -71,6 +71,8 @@
       var dropdownEl;
       var compiledDropdownEl;
 
+      scope.results = [];
+
       elem.on('mousedown', function(event) {
         if (event.target.id) {
           mousedownOn = event.target.id;
@@ -515,7 +517,6 @@
       function initResults() {
         scope.showDropdown = displaySearching;
         scope.currentIndex = scope.focusFirst ? 0 : -1;
-        scope.results = [];
       }
 
       function getLocalResults(str) {
