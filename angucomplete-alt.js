@@ -39,13 +39,11 @@
     var MAX_LENGTH = 524288;  // the default max length per the html maxlength attribute
     var PAUSE = 500;
     var BLUR_TIMEOUT = 200;
-
     // string constants
     var REQUIRED_CLASS = 'autocomplete-required';
     var TEXT_SEARCHING = 'Searching...';
     var TEXT_NORESULTS = 'No results found';
     var TEMPLATE_URL = '/angucomplete-alt/index.html';
-    var CURRENT_LOCATION = 'current location';
     // Set the default template for this directive
     $templateCache.put(TEMPLATE_URL,
       '<div class="angucomplete-holder" ng-class="{\'angucomplete-dropdown-visible\': showDropdown}">' +
@@ -258,7 +256,7 @@
         }
         else if (which === KEY_DW) {
           event.preventDefault();
-          if (!scope.showDropdown && scope.searchStr && scope.searchStr.length >= minlength) {
+          if (!scope.showDropdown && scope.searchStr && scope.searchStr.length >= scope.minLengthForApiCall) {
             initResults();
             scope.searching = true;
             searchTimerComplete(scope.searchStr);
@@ -271,13 +269,13 @@
           });
         }
         else {
-          if (minlength === 0 && !scope.searchStr) {
+          if (scope.minLengthForApiCall == 0 && !scope.searchStr) {
             return;
           }
 
           if (!scope.searchStr || scope.searchStr === '') {
             scope.showDropdown = false;
-          } else if (scope.searchStr.length >= minlength) {
+          } else if (scope.searchStr.length >= scope.minLengthForApiCall) {
             searchWithPause();
           }
 
@@ -332,33 +330,42 @@
       function updateInputField() {
         var current = scope.results[scope.currentIndex];
         if (scope.matchClass) {
-          inputField.val(extractTitle(current.originalObject));
+          inputField.val(extractTitle(current.originalObject)).trigger('change');
         }
         else {
-          inputField.val(current.title);
+          inputField.val(current.title).trigger('change');
         }
+      }
+
+      function selectResultIfNotClearListCustomLabel() {
+        var clearListCustomLabel = isClearListCustomLabel();
+        if (!clearListCustomLabel) {
+          scope.selectResult(scope.results[scope.currentIndex]);
+        }
+      }
+
+      function isClearListCustomLabel() {
+        return extractTitle(scope.results[scope.currentIndex].originalObject) === scope.clearListCustomLabel;
       }
 
       function keydownHandler(event) {
         var which = ie8EventNormalizer(event);
         var row = null;
         var rowTop = null;
-        var isIgnoreWord = false;
+        var clearListCustomLabel = false;
         if (which === KEY_EN && scope.results) {
           if (scope.currentIndex >= 0 && scope.currentIndex < scope.results.length) {
             event.preventDefault();
-            isIgnoreWord = extractTitle(scope.results[scope.currentIndex].originalObject) === scope.ignoreWord;
-            if (!isIgnoreWord) {
-              scope.selectResult(scope.results[scope.currentIndex]);
-            }
+            clearListCustomLabel = isClearListCustomLabel();
+            selectResultIfNotClearListCustomLabel();
           } else {
             handleOverrideSuggestions(event);
             clearResults();
           }
           scope.$apply();
-          if (isIgnoreWord) {
+          if (clearListCustomLabel) {
             clearResults();
-            scope.$emit('angucomplete_key_en_clear_list');
+            scope.$emit('angucomplete_on_clear_list');
           } else {
             scope.$emit('angucomplete_key_en');
           }
@@ -418,10 +425,7 @@
               if (scope.currentIndex === -1) {
                 scope.currentIndex = 0;
               }
-              isIgnoreWord = extractTitle(scope.results[scope.currentIndex].originalObject) === scope.ignoreWord;
-              if (!isIgnoreWord) {
-                scope.selectResult(scope.results[scope.currentIndex]);
-              }
+              selectResultIfNotClearListCustomLabel();
               scope.$digest();
             }
           }
@@ -583,7 +587,7 @@
 
       function searchTimerComplete(str) {
         // Begin the search
-        if (!str || str.length < minlength) {
+        if (!str || str.length < scope.minLengthForApiCall) {
           return;
         }
         if (scope.localData) {
@@ -663,7 +667,7 @@
         if (scope.focusIn) {
           scope.focusIn();
         }
-        if (minlength === 0 && (!scope.searchStr || scope.searchStr.length === 0 || scope.searchStr.toLowerCase() === CURRENT_LOCATION)) {
+        if (scope.minLengthForApiCall == 0 && (!scope.searchStr || scope.searchStr.length === 0 || scope.searchStr.toLowerCase() === scope.defaultLocation.toLowerCase())) {
           scope.currentIndex = scope.focusFirst ? 0 : scope.currentIndex;
           scope.showDropdown = true;
           showAll();
@@ -677,7 +681,8 @@
       scope.hideResults = function (event) {
         if (mousedownOn &&
           (mousedownOn === scope.id + '_dropdown' ||
-          mousedownOn.indexOf('angucomplete') >= 0)) {
+          mousedownOn.indexOf('angucomplete') >= 0 ||
+          mousedownOn.indexOf('_ClearId') >= 0)) {
           mousedownOn = null;
         }
         else {
@@ -714,10 +719,11 @@
       };
 
       scope.selectResultWithClick = function (result) {
-        var isClearListClicked = extractTitle(result.originalObject) === scope.ignoreWord;
+        var isClearListClicked = extractTitle(result.originalObject) === scope.clearListCustomLabel;
         if (isClearListClicked) {
-          scope.$emit('angucomplete_key_en_clear_list');
+          scope.$emit('angucomplete_on_clear_list');
         } else {
+          updateInputField();
           scope.selectResult(result);
           scope.$emit('angucomplete_click_select');
         }
@@ -742,11 +748,11 @@
       };
 
       scope.inputChangeHandler = function (str) {
-        if (str === undefined || str.length < minlength) {
+        if (str === undefined || str.length < scope.minLengthForApiCall) {
           cancelHttpRequest();
           clearResults();
         }
-        else if (str.length < 2 && minlength === 0) {
+        else if (str.length < scope.minLengthForApiCall || (str.length == 0 && scope.minLengthForApiCall == 0)) {
           scope.searching = false;
           showAll();
         }
@@ -877,8 +883,10 @@
         'bindDropdownSelector': '@',
         'templateDropdownUrl': '@',
         'suggestOnFocus': '@',
-        ignoreWord: '@',
-        minLengthForMatchClass: '@'
+        clearListCustomLabel: '@',
+        minLengthForMatchClass: '@',
+        minLengthForApiCall: '@',
+        defaultLocation: '@'
       },
       templateUrl: function (element, attrs) {
         return attrs.templateUrl || TEMPLATE_URL;
