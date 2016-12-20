@@ -269,7 +269,7 @@
           });
         }
         else {
-          if (scope.minLengthForApiCall == 0 && !scope.searchStr) {
+          if (scope.minLengthForApiCall === '0' && !scope.searchStr) {
             return;
           }
 
@@ -332,6 +332,8 @@
         if (scope.matchClass) {
           if (!isClearListCustomLabel()) {
             inputField.val(extractTitle(current.originalObject));
+          } else {
+            inputField.val('');
           }
         }
         else {
@@ -668,7 +670,7 @@
         if (scope.focusIn) {
           scope.focusIn();
         }
-        if (scope.minLengthForApiCall == 0 && (!scope.searchStr || scope.searchStr.length === 0 || scope.searchStr.toLowerCase() === scope.defaultLocation.toLowerCase())) {
+        if (scope.minLengthForApiCall === '0' && (!scope.searchStr || scope.searchStr.length === 0 || scope.searchStr.toLowerCase() === scope.defaultLocation.toLowerCase())) {
           scope.currentIndex = scope.focusFirst ? 0 : scope.currentIndex;
           scope.showDropdown = true;
           showAll();
@@ -753,7 +755,7 @@
           cancelHttpRequest();
           clearResults();
         }
-        else if (str.length < scope.minLengthForApiCall || (str.length == 0 && scope.minLengthForApiCall == 0)) {
+        else if (str.length < scope.minLengthForApiCall || (str.length === 0 && scope.minLengthForApiCall === '0')) {
           scope.searching = false;
           showAll();
         }
