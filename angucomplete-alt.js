@@ -330,7 +330,9 @@
       function updateInputField() {
         var current = scope.results[scope.currentIndex];
         if (scope.matchClass) {
-          inputField.val(extractTitle(current.originalObject)).trigger('change');
+          if (!isClearListCustomLabel()) {
+            inputField.val(extractTitle(current.originalObject)).trigger('change');
+          }
         }
         else {
           inputField.val(current.title).trigger('change');
@@ -338,8 +340,7 @@
       }
 
       function selectResultIfNotClearListCustomLabel() {
-        var clearListCustomLabel = isClearListCustomLabel();
-        if (!clearListCustomLabel) {
+        if (!isClearListCustomLabel()) {
           scope.selectResult(scope.results[scope.currentIndex]);
         }
       }
