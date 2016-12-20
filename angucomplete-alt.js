@@ -331,11 +331,11 @@
         var current = scope.results[scope.currentIndex];
         if (scope.matchClass) {
           if (!isClearListCustomLabel()) {
-            inputField.val(extractTitle(current.originalObject)).trigger('change');
+            inputField.val(extractTitle(current.originalObject));
           }
         }
         else {
-          inputField.val(current.title).trigger('change');
+          inputField.val(current.title);
         }
       }
 
