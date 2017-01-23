@@ -694,14 +694,14 @@
             scope.$apply(function () {
               if (scope.searchStr && scope.searchStr.length > 0) {
                 inputField.val(scope.searchStr);
+
+                if (scope.focusOut) {
+                  scope.focusOut();
+                }
               }
             });
           }, BLUR_TIMEOUT);
           cancelHttpRequest();
-
-          if (scope.focusOut) {
-            scope.focusOut();
-          }
 
           if (scope.overrideSuggestions) {
             if (scope.searchStr && scope.searchStr.length > 0 && scope.currentIndex === -1) {
