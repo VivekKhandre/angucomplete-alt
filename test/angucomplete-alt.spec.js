@@ -1666,6 +1666,30 @@ describe('angucomplete-alt', function() {
       inputField.trigger(eKeyup);
       expect(inputField.val()).toEqual('e');
     });
+
+    it('should trigger "change" event when ESC key is pressed', function() {
+      var element = angular.element('<div angucomplete-alt id="ex1" placeholder="Search people" selected-object="selectedPerson" local-data="people" search-fields="firstName,middleName,surname" title-field="firstName,surname" minlength="1"/>');
+      $scope.selectedPerson = undefined;
+      $scope.people = [
+        {firstName: 'Emma', middleName: 'C.D.', surname: 'Watson'},
+        {firstName: 'Elvis', middleName: 'A.', surname: 'Presly'},
+        {firstName: 'John', middleName: 'A.', surname: 'Elway'}
+      ];
+      $compile(element)($scope);
+      $scope.$digest();
+
+      var inputField = element.find('#ex1_value');
+      var changeEventListener = jasmine.createSpy('changeEventListener');
+      inputField.on('change', changeEventListener);
+      var eKeyup = $.Event('keyup');
+
+      inputField.val('e');
+
+      // Hit ESC
+      eKeyup.which = KEY_ES;
+      inputField.trigger(eKeyup);
+      expect(changeEventListener).toHaveBeenCalled();
+    });
   });
 
   describe('set minlength to 0', function() {
