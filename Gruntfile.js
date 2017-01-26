@@ -63,6 +63,8 @@ module.exports = function (grunt) {
   // Register tasks
   grunt.registerTask('default', ['jshint', 'karma:unit']);
   grunt.registerTask('watch', ['jshint', 'karma:watch']);
+
+  // TODO: build should depend on karma:unit to prevent the situation that has arisen: 49 failing unit tests and no one knew.
   grunt.registerTask('build', ['jshint', 'uglify:build']);
 
   grunt.initConfig(initConfig);
