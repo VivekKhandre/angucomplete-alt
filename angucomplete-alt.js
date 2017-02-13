@@ -39,6 +39,7 @@
     var MAX_LENGTH = 524288;  // the default max length per the html maxlength attribute
     var PAUSE = 500;
     var BLUR_TIMEOUT = 200;
+    var DELAY = 120;
     // string constants
     var REQUIRED_CLASS = 'autocomplete-required';
     var TEXT_SEARCHING = 'Searching...';
@@ -332,15 +333,27 @@
 
       function updateInputField() {
         var current = scope.results[scope.currentIndex];
-        if (scope.matchClass) {
-          if (!isClearListCustomLabel()) {
-            inputField.val(extractTitle(current.originalObject));
-          } else {
-            inputField.val('');
-          }
+        if (!scope.matchClass) {
+          updateInput(current.title);
+        } else if (!isClearListCustomLabel()) {
+          updateInput(extractTitle(current.originalObject));
+        } else {
+          updateInput('');
         }
-        else {
-          inputField.val(current.title);
+      }
+
+      function updateInput(text) {
+        /**
+         * Placeholder to Floating label action can be triggered only when inputField  has some value but that causes the overlapping of placeholder and actual location text
+         * so to resolve that adding a hack by inserding space as value to trigger placeholder to floatlabel before inserting actual text into the inputField and delaying actual text insertion.
+         */
+        if (text === '') {
+          inputField.val(text);
+        } else {
+          inputField.val(' ');
+          $timeout(function () {
+            inputField.val(text);
+          }, DELAY);
         }
       }
 
@@ -453,7 +466,7 @@
       function restoreSearchStr() {
         scope.$apply(function () {
           scope.currentIndex = -1;
-          inputField.val(scope.searchStr);
+          updateInput(scope.searchStr);
         });
       }
 
