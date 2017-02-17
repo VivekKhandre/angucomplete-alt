@@ -351,10 +351,11 @@
           inputField.val(text);
         } else {
           inputField.val(' ');
-          $timeout(function () {
-            inputField.val(text);
-          }, DELAY);
         }
+
+        $timeout(function () {
+          inputField.val(text);
+        }, DELAY);
       }
 
       function selectResultIfNotClearListCustomLabel() {
