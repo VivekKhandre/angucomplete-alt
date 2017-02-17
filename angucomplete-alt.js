@@ -266,7 +266,7 @@
         else if (which === KEY_ES) {
           clearResults();
           scope.$apply(function () {
-            inputField.val(scope.searchStr);
+            updateInput(scope.searchStr);
 
             // trigger the 'change' event after updating the field, since the suggestons list is closing.
             inputField.trigger('change');
@@ -710,7 +710,7 @@
             clearResults();
             scope.$apply(function () {
               if (scope.searchStr && scope.searchStr.length > 0) {
-                inputField.val(scope.searchStr);
+                updateInput(scope.searchStr);
 
                 // trigger the 'change' event after updating the field, since the suggestons list is closing.
                 inputField.trigger('change');
