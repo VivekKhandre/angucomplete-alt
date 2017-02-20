@@ -266,10 +266,12 @@
         else if (which === KEY_ES) {
           clearResults();
           scope.$apply(function () {
-            inputField.val(scope.searchStr);
+            updateInput(scope.searchStr);
 
             // trigger the 'change' event after updating the field, since the suggestons list is closing.
-            inputField.trigger('change');
+            $timeout(function () {
+              inputField.trigger('change');
+            }, DELAY);
           });
         }
         else {
@@ -351,10 +353,11 @@
           inputField.val(text);
         } else {
           inputField.val(' ');
-          $timeout(function () {
-            inputField.val(text);
-          }, DELAY);
         }
+
+        $timeout(function () {
+          inputField.val(text);
+        }, DELAY);
       }
 
       function selectResultIfNotClearListCustomLabel() {
@@ -709,10 +712,12 @@
             clearResults();
             scope.$apply(function () {
               if (scope.searchStr && scope.searchStr.length > 0) {
-                inputField.val(scope.searchStr);
+                updateInput(scope.searchStr);
 
                 // trigger the 'change' event after updating the field, since the suggestons list is closing.
-                inputField.trigger('change');
+                $timeout(function () {
+                  inputField.trigger('change');
+                }, DELAY);
 
                 if (scope.focusOut) {
                   scope.focusOut();
@@ -746,12 +751,14 @@
           scope.$emit('angucomplete_on_clear_list');
         } else {
           updateInputField();
-          // updateInputField does not trigger the change event on the inputField and shouldn't because it is also used during keyboard navigation of the
-          // suggestions list. In our case, though, we want to trigger it - if the user has clicked a result, it means the suggestions list will be closed.
-          inputField.trigger('change');
+          $timeout(function () {
+            // updateInputField does not trigger the change event on the inputField and shouldn't because it is also used during keyboard navigation of the
+            // suggestions list. In our case, though, we want to trigger it - if the user has clicked a result, it means the suggestions list will be closed.
+            inputField.trigger('change');
 
-          scope.selectResult(result);
-          scope.$emit('angucomplete_click_select');
+            scope.selectResult(result);
+            scope.$emit('angucomplete_click_select');
+          }, DELAY);
         }
 
       };
