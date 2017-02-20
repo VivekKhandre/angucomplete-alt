@@ -269,7 +269,9 @@
             updateInput(scope.searchStr);
 
             // trigger the 'change' event after updating the field, since the suggestons list is closing.
-            inputField.trigger('change');
+            $timeout(function () {
+              inputField.trigger('change');
+            }, DELAY);
           });
         }
         else {
