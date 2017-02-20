@@ -713,11 +713,12 @@
                 updateInput(scope.searchStr);
 
                 // trigger the 'change' event after updating the field, since the suggestons list is closing.
-                inputField.trigger('change');
-
-                if (scope.focusOut) {
-                  scope.focusOut();
-                }
+                $timeout(function () {
+                  inputField.trigger('change');
+                  if (scope.focusOut) {
+                    scope.focusOut();
+                  }
+                }, DELAY);
               }
             });
           }, BLUR_TIMEOUT);
