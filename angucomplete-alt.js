@@ -117,11 +117,11 @@
 
       scope.$on('angucomplete-alt:clearInput', function (event, elementId) {
         if (!elementId || elementId === scope.id) {
+          inputField.trigger('focus');
           scope.searchStr = null;
           callOrAssign();
           handleRequired(false);
           clearResults();
-          inputField.trigger('focus');
         }
       });
 
