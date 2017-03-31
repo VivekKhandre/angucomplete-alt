@@ -121,6 +121,7 @@
           callOrAssign();
           handleRequired(false);
           clearResults();
+          inputField.trigger('focus');
         }
       });
 
