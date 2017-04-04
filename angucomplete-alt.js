@@ -121,6 +121,7 @@
           callOrAssign();
           handleRequired(false);
           clearResults();
+          mousedownOn = null;
         }
       });
 
