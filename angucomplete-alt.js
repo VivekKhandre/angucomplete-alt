@@ -687,7 +687,8 @@
       scope.hideResults = function (event) {
         if (mousedownOn &&
           (mousedownOn === scope.id + '_dropdown' ||
-          mousedownOn.indexOf('angucomplete') >= 0 )) {
+          mousedownOn.indexOf('angucomplete') >= 0 ||
+          mousedownOn.indexOf('_ClearId') >= 0)) {
           mousedownOn = null;
         }
         else {
